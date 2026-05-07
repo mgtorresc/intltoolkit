@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo Enfrentar Proyectos</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── Palette ── */
+    --ocean-deep:    #0267C1;
+    --twitter-blue:  #0075C4;
+    --golden-orange: #EFA00B;
+    --spicy-orange:  #D65108;
+    --dark-walnut:   #591F0A;
+
+    --bg: #F5F1EB;
+    --surface: #FEFCF8;
+    --border: #D9C9B0;
+    --text: #591F0A;          /* Dark Walnut as main text */
+    --text-muted: #9A7A60;
+    --accent: #0267C1;        /* Ocean Deep as primary accent */
+    --accent-light: #DDEEFF;
+    --accent2: #D65108;       /* Spicy Orange as secondary accent */
+    --danger: #D65108;
+    --stage-1: #DDEEFF;       /* Ocean Deep tint */
+    --stage-2: #FFF4D6;       /* Golden Orange tint */
+    --stage-3: #FFE5D0;       /* Spicy Orange tint */
+    --stage-4: #F5E8E0;       /* Dark Walnut tint */
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(89,31,10,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── SCREEN 1: Projects ── */
+  #screen-projects {
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  .projects-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 520px;
+    overflow: hidden;
+  }
+
+  .projects-header {
+    padding: 28px 32px 20px;
+    border-bottom: 1.5px solid var(--border);
+    background: var(--surface);
+  }
+
+  .projects-header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.7rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .projects-header p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .projects-body { padding: 20px 24px; }
+
+  .new-project-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .new-project-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .new-project-row input:focus { border-color: var(--ocean-deep); }
+  .new-project-row input::placeholder { color: var(--text-muted); }
+
+  .btn-primary {
+    background: var(--golden-orange);
+    color: var(--dark-walnut);
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--spicy-orange); color: #fff; }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .project-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .project-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    animation: slideIn 0.25s ease forwards;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .project-item:hover {
+    border-color: var(--twitter-blue);
+    background: #E5F2FF;
+    transform: translateX(3px);
+  }
+
+  .project-item-name {
+    font-size: 0.92rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .project-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ocean-deep);
+    flex-shrink: 0;
+  }
+
+  .project-item-arrow {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+  }
+  .project-item:hover .project-item-arrow { transform: translateX(4px); }
+
+  .btn-delete {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    margin-right: 4px;
+  }
+  .btn-delete:hover { color: var(--danger); background: #FDF0EF; }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .empty-state span { display: block; font-size: 2rem; margin-bottom: 8px; }
+
+  /* ── SCREEN 2: Journey Map ── */
+  #screen-journey {
+    padding: 0;
+    background: var(--bg);
+  }
+
+  .journey-topbar {
+    background: var(--surface);
+    color: var(--text);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 2px 8px rgba(89,31,10,0.06);
+  }
+
+  .btn-back {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-back:hover { background: var(--border); }
+
+  .journey-topbar h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  .journey-topbar span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  /* Journey stages container */
+  .stages-wrapper {
+    padding: 24px;
+    overflow-x: auto;
+  }
+
+  .stages-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 16px;
+    min-width: 1100px;
+  }
+
+  .stage-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+  }
+  .stage-card:hover { box-shadow: 0 4px 20px rgba(28,25,21,0.12); }
+
+  .stage-header {
+    padding: 14px 18px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .stage-number {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .stage-1 .stage-header { background: var(--stage-1); }
+  .stage-1 .stage-number { background: var(--ocean-deep); color: #fff; }
+  .stage-2 .stage-header { background: var(--stage-2); }
+  .stage-2 .stage-number { background: var(--golden-orange); color: var(--dark-walnut); }
+  .stage-3 .stage-header { background: var(--stage-3); }
+  .stage-3 .stage-number { background: var(--spicy-orange); color: #fff; }
+  .stage-4 .stage-header { background: var(--stage-4); }
+  .stage-4 .stage-number { background: var(--dark-walnut); color: #fff; }
+
+  .stage-title-input {
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    width: 100%;
+    outline: none;
+    cursor: text;
+  }
+
+  .stage-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Notes area */
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .notes-area {
+    width: 100%;
+    min-height: 110px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.55;
+  }
+  .notes-area:focus { border-color: var(--ocean-deep); }
+  .notes-area::placeholder { color: var(--text-muted); font-style: italic; }
+
+  /* Emotions */
+  .emotions-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .emotion-btn {
+    font-size: 1.4rem;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, background 0.2s;
+    line-height: 1;
+    position: relative;
+  }
+  .emotion-btn:hover { transform: scale(1.15); }
+  .emotion-btn.selected {
+    border-color: var(--golden-orange);
+    background: #FFF4D6;
+    transform: scale(1.1);
+  }
+  .emotion-btn .tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 3px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .emotion-btn:hover .tooltip { opacity: 1; }
+
+  /* Action plan */
+  .action-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .action-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.2s ease forwards;
+  }
+
+  .action-check {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    appearance: none;
+    background: var(--bg);
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .action-check:checked {
+    background: var(--ocean-deep);
+    border-color: var(--ocean-deep);
+  }
+  .action-check:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px; left: 1px;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  .action-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    color: var(--text);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .action-input:focus { border-color: var(--ocean-deep); }
+  .action-input::placeholder { color: var(--text-muted); }
+  .action-input.done { text-decoration: line-through; color: var(--text-muted); }
+
+  .btn-remove-action {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 5px;
+    border-radius: 5px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .btn-remove-action:hover { color: var(--danger); background: #FDF0EF; }
+
+  .btn-add-action {
+    background: none;
+    border: 1.5px dashed var(--border);
+    color: var(--text-muted);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    width: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+  .btn-add-action:hover {
+    border-color: var(--spicy-orange);
+    color: var(--spicy-orange);
+    background: #FFE5D0;
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 8px 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .scroll-hint::before, .scroll-hint::after {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     SCREEN 1: Projects
+════════════════════════════════════ -->
+<div id="screen-projects" class="screen active">
+  <div class="projects-card">
+    <div class="projects-header">
+      <h1>Cómo enfrentar proyectos</h1>
+      <p>Esta es una herramienta para registrar pensamientos, sentimientos y acciones a seguir durante el desarrollo de un proyecto.
+        Para empezar a usarla, escribe un nombre y haz clic en el botón "Crear". Después haz clic en su nombre y registra cómo se desarrolla cada etapa.
+      </p>
+    </div>
+    <div class="projects-body">
+      <div class="new-project-row">
+        <input type="text" id="new-project-name" placeholder="Nombre del nuevo proyecto…" maxlength="60" />
+        <button class="btn-primary" onclick="createProject()">+ Crear</button>
+      </div>
+      <div class="project-list" id="project-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 2: Journey Map
+════════════════════════════════════ -->
+<div id="screen-journey" class="screen">
+  <div class="journey-topbar">
+    <button class="btn-back" onclick="goBack()">← Volver</button>
+    <h2 id="journey-title">Proyecto</h2>
+    <span>Customer Journey Map</span>
+  </div>
+  <div class="scroll-hint">← Desliza horizontalmente para ver todas las etapas →</div>
+  <div class="stages-wrapper">
+    <div class="stages-grid" id="stages-grid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const EMOTIONS = [
+  { emoji: '😄', label: 'Muy feliz' },
+  { emoji: '🙂', label: 'Contento' },
+  { emoji: '😐', label: 'Neutral' },
+  { emoji: '😕', label: 'Confundido' },
+  { emoji: '😤', label: 'Frustrado' },
+  { emoji: '😢', label: 'Triste' },
+  { emoji: '🤩', label: 'Emocionado' },
+  { emoji: '😰', label: 'Ansioso' },
+];
+
+const DEFAULT_STAGES = [
+  { title: 'Etapa 1', notes: '', emotion: null, actions: [] },
+  { title: 'Etapa 2', notes: '', emotion: null, actions: [] },
+  { title: 'Etapa 3', notes: '', emotion: null, actions: [] },
+  { title: 'Etapa 4', notes: '', emotion: null, actions: [] },
+];
+
+let projects = JSON.parse(localStorage.getItem('cep-projects') || '[]');
+let currentProjectId = null;
+
+function save() {
+  localStorage.setItem('cep-projects', JSON.stringify(projects));
+}
+
+function getProject() {
+  return projects.find(p => p.id === currentProjectId);
+}
+
+// ── SCREEN 1 LOGIC ────────────────────────────────────────────────────────────
+
+function renderProjects() {
+  const list = document.getElementById('project-list');
+  if (projects.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span>📋</span>Aún no hay proyectos.<br>¡Crea el primero!</div>`;
+    return;
+  }
+  list.innerHTML = projects.map(p => `
+    <div class="project-item" onclick="openProject('${p.id}')">
+      <span class="project-item-name">
+        <span class="project-dot"></span>
+        ${escHtml(p.name)}
+      </span>
+      <span style="display:flex;align-items:center;gap:4px">
+        <button class="btn-delete" onclick="deleteProject(event,'${p.id}')" title="Eliminar">✕</button>
+        <span class="project-item-arrow">→</span>
+      </span>
+    </div>
+  `).join('');
+}
+
+function createProject() {
+  const input = document.getElementById('new-project-name');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  const project = {
+    id: 'p_' + Date.now(),
+    name,
+    stages: JSON.parse(JSON.stringify(DEFAULT_STAGES))
+  };
+  projects.unshift(project);
+  save();
+  input.value = '';
+  renderProjects();
+}
+
+function deleteProject(e, id) {
+  e.stopPropagation();
+  if (!confirm('¿Eliminar este proyecto?')) return;
+  projects = projects.filter(p => p.id !== id);
+  save();
+  renderProjects();
+}
+
+document.getElementById('new-project-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') createProject();
+});
+
+// ── SCREEN 2 LOGIC ────────────────────────────────────────────────────────────
+
+function openProject(id) {
+  currentProjectId = id;
+  const proj = getProject();
+  document.getElementById('journey-title').textContent = proj.name;
+  renderStages();
+  showScreen('screen-journey');
+}
+
+function goBack() {
+  saveStagesToModel();
+  showScreen('screen-projects');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderStages() {
+  const proj = getProject();
+  const grid = document.getElementById('stages-grid');
+
+  grid.innerHTML = proj.stages.map((stage, si) => `
+    <div class="stage-card stage-${si+1}">
+      <div class="stage-header">
+        <div class="stage-number">${si+1}</div>
+        <input class="stage-title-input" type="text"
+          value="${escHtml(stage.title)}"
+          placeholder="Etapa ${si+1}"
+          onchange="updateStageTitle(${si}, this.value)" />
+      </div>
+      <div class="stage-body">
+
+        <!-- Notes -->
+        <div>
+          <div class="section-label">Observaciones / Notas</div>
+          <textarea class="notes-area"
+            placeholder="¿Qué pasa en esta etapa? Escribe aquí…"
+            onchange="updateNotes(${si}, this.value)">${escHtml(stage.notes)}</textarea>
+        </div>
+
+        <!-- Emotions -->
+        <div>
+          <div class="section-label">Sentimientos del usuario</div>
+          <div class="emotions-row">
+            ${EMOTIONS.map((em, ei) => `
+              <button class="emotion-btn ${stage.emotion === ei ? 'selected' : ''}"
+                onclick="toggleEmotion(${si}, ${ei})"
+                title="${em.label}">
+                ${em.emoji}
+                <span class="tooltip">${em.label}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Action Plan -->
+        <div>
+          <div class="section-label">Plan de acción</div>
+          <div class="action-list" id="actions-${si}">
+            ${stage.actions.map((a, ai) => renderActionItem(si, ai, a)).join('')}
+          </div>
+          <button class="btn-add-action" onclick="addAction(${si})">+ Agregar acción</button>
+        </div>
+
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderActionItem(si, ai, action) {
+  return `
+    <div class="action-item" id="action-${si}-${ai}">
+      <input type="checkbox" class="action-check"
+        ${action.done ? 'checked' : ''}
+        onchange="toggleActionDone(${si},${ai},this.checked)" />
+      <input type="text" class="action-input ${action.done ? 'done' : ''}"
+        value="${escHtml(action.text)}"
+        placeholder="Escribe una acción…"
+        onchange="updateActionText(${si},${ai},this.value)" />
+      <button class="btn-remove-action" onclick="removeAction(${si},${ai})">✕</button>
+    </div>
+  `;
+}
+
+// Stage updates
+function updateStageTitle(si, val) { getProject().stages[si].title = val; save(); }
+function updateNotes(si, val)       { getProject().stages[si].notes = val; save(); }
+
+function toggleEmotion(si, ei) {
+  const stage = getProject().stages[si];
+  stage.emotion = stage.emotion === ei ? null : ei;
+  save();
+  // Update buttons only
+  const stageEl = document.querySelectorAll('.stage-card')[si];
+  stageEl.querySelectorAll('.emotion-btn').forEach((btn, idx) => {
+    btn.classList.toggle('selected', idx === stage.emotion);
+  });
+}
+
+// Action plan
+function addAction(si) {
+  const proj = getProject();
+  proj.stages[si].actions.push({ text: '', done: false });
+  save();
+  const ai = proj.stages[si].actions.length - 1;
+  const list = document.getElementById(`actions-${si}`);
+  const div = document.createElement('div');
+  div.innerHTML = renderActionItem(si, ai, { text: '', done: false });
+  list.appendChild(div.firstElementChild);
+  list.lastElementChild.querySelector('.action-input').focus();
+}
+
+function updateActionText(si, ai, val) {
+  getProject().stages[si].actions[ai].text = val;
+  save();
+}
+
+function toggleActionDone(si, ai, done) {
+  getProject().stages[si].actions[ai].done = done;
+  save();
+  const input = document.querySelector(`#action-${si}-${ai} .action-input`);
+  if (input) input.classList.toggle('done', done);
+}
+
+function removeAction(si, ai) {
+  getProject().stages[si].actions.splice(ai, 1);
+  save();
+  // Re-render the action list for this stage
+  const proj = getProject();
+  const list = document.getElementById(`actions-${si}`);
+  list.innerHTML = proj.stages[si].actions.map((a, newAi) => renderActionItem(si, newAi, a)).join('');
+}
+
+function saveStagesToModel() {
+  // Notes are already saved on change, this is a no-op flush
+  document.querySelectorAll('.notes-area').forEach((ta, si) => {
+    if (getProject()) getProject().stages[si].notes = ta.value;
+  });
+  save();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+
+function escHtml(str = '') {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderProjects();
+</script>
+</body>
+</html>
